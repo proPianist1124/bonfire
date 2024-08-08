@@ -1,13 +1,13 @@
 import axios from "axios";
 import { redirect } from "@sveltejs/kit";
 import { v4 as uuid } from "uuid";
-import { PRIVATE_DISCORD_CLIENT_ID, PRIVATE_DISCORD_CLIENT_SECRET } from "$env/static/private";
+import { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } from "$env/static/private";
 import { db } from "$lib/postgres";
 
 export async function GET({ url, cookies }) {
     const formData = new URLSearchParams({
-        client_id: PRIVATE_DISCORD_CLIENT_ID,
-        client_secret: PRIVATE_DISCORD_CLIENT_SECRET,
+        client_id: DISCORD_CLIENT_ID,
+        client_secret: DISCORD_CLIENT_SECRET,
         grant_type: "authorization_code",
         code: String(url.searchParams.get("code")),
         redirect_uri: "http://localhost:3000/api/auth/discord"

@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 import { db } from "$lib/postgres";
-import { PRIVATE_CRYPTO_KEY } from "$env/static/private";
+import { ENCRYPTION_KEY } from "$env/static/private";
 
 export async function load({ params, cookies }: {
     params: {
@@ -19,7 +19,7 @@ export async function load({ params, cookies }: {
                 text: string;
             }) => {
                 const author = await db`SELECT id, username, profile, bio FROM yasss_users WHERE id = ${msg.username};`;
-                const bytes = CryptoJS.AES.decrypt(msg.text, PRIVATE_CRYPTO_KEY);
+                const bytes = CryptoJS.AES.decrypt(msg.text, ENCRYPTION_KEY);
     
                 return {
                     ...author[0],
