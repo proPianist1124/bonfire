@@ -11,7 +11,7 @@ export async function GET({ url, cookies }) {
             client_secret: DISCORD_CLIENT_SECRET,
             grant_type: "authorization_code",
             code: String(url.searchParams.get("code")),
-            redirect_uri: "http://localhost:3000/api/auth/discord"
+            redirect_uri: "https://yasss-kf7t.onrender.com/api/auth/discord"
         });
 
         const output = await axios.post("https://discord.com/api/v10/oauth2/token",

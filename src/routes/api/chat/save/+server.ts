@@ -13,7 +13,9 @@ export async function POST({ request }: {
 
     formData.message.text = CryptoJS.AES.encrypt(formData.message.text.replaceAll(`"`, `\"`), ENCRYPTION_KEY).toString();
 
-    await db`UPDATE yasss_chats SET messages = ${[formData.message, ...chat[0].messages]} WHERE id = ${chat[0].id};`;
+    await db`UPDATE yasss_chats SET messages = ${[{
+        ...formData.message
+    }, ...chat[0].messages]} WHERE id = ${chat[0].id};`;
 
     return new Response("Message saved");
 }

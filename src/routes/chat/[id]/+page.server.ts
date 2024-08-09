@@ -15,13 +15,16 @@ export async function load({ params, cookies }: {
 
         if (chat) {
             chat[0].messages = await Promise.all(await chat[0].messages.map(async (msg: {
+                id: string;
+                message_id: string;
                 username: string;
                 text: string;
             }) => {
-                const author = await db`SELECT id, username, profile, bio FROM yasss_users WHERE id = ${msg.username};`;
+                const author = await db`SELECT username, profile, bio FROM yasss_users WHERE id = ${msg.username};`;
                 const bytes = CryptoJS.AES.decrypt(msg.text, ENCRYPTION_KEY);
     
                 return {
+                    message_id: msg.message_id,
                     ...author[0],
                     text: bytes.toString(CryptoJS.enc.Utf8)
                 }

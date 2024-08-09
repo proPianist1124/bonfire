@@ -1,7 +1,16 @@
 <script lang="ts">
     import { io } from "socket.io-client";
+    import { v4 as uuid } from "uuid";
     import Error from "../../+error.svelte";
     import { showDialog } from "$lib/dialog";
+    import Message from "$lib/message.svelte";
+
+    type message = {
+        id?: string;
+        message_id: string;
+        text: string;
+        username: string;
+    };
 
     export let data: {
         id: string;
@@ -9,10 +18,7 @@
         type: string;
         username: string;
         owner: string;
-        messages: Array<{
-            text: string;
-            username: string;
-        }>;
+        messages: Array<message>;
         members: Array<{
             username: string;
             profile: string;
@@ -29,13 +35,10 @@
 
     let error: string = "";
 
-    let messages: Array<{
-        text: string;
-        username: string;
-    }> = data.messages ? [...data.messages] : [];
+    let messages: Array<message> = data.messages ? [...data.messages] : [];
 
     // listen for messages
-    socket.on(data.id, (message: { text: string; username: string }) => {
+    socket.on(data.id, (message: message) => {
         messages = [message, ...messages];
     });
 
@@ -47,20 +50,20 @@
             error = "";
         }
 
+        const id = uuid();
+
         messages = [
             {
+                message_id: uuid(),
                 text: e.target.message.value,
                 username: data.user?.username,
             },
             ...messages,
         ];
 
-        const message: {
-            id: string;
-            text: string;
-            username: string;
-        } = {
+        const message: message = {
             id: data.id,
+            message_id: id,
             text: e.target.message.value,
             username: data.user?.id,
         };
@@ -90,7 +93,7 @@
         >{data.error
             ? "404 / yasss"
             : data.type == "dm"
-              ? data.username
+              ? `${data.username} / yasss`
               : `${data.name} / yasss`}</title
     >
 </svelte:head>
@@ -128,33 +131,7 @@
     <div id="messages" class="overflow-auto h-[50vh] mb-5">
         {#if messages && messages.length !== 0}
             {#each messages as message, i}
-                <div
-                    class="block text-lg {messages[i + 1]?.username ==
-                    message.username
-                        ? ''
-                        : 'mb-3'}"
-                >
-                    <span
-                        class="block {data.user?.username == message.username
-                            ? 'text-red-500'
-                            : 'text-blue-500'} font-medium"
-                        >{data.user?.username == message.username
-                            ? messages[i - 1]?.username == message.username
-                                ? ""
-                                : "me"
-                            : messages[i - 1]?.username == message.username
-                              ? ""
-                              : message.username}</span
-                    >
-                    <div
-                        class="border-l-2 {data.user?.username ==
-                        message.username
-                            ? 'border-l-red-500'
-                            : 'border-l-blue-500'} p-2 w-fit"
-                    >
-                        {message.text}
-                    </div>
-                </div>
+                <Message {messages} {message} username={message.username} {i} />
             {/each}
         {:else}
             <p class="text-center text-gray-400">No messages yet</p>

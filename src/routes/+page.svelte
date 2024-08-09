@@ -7,6 +7,10 @@
     function removeFriend() {
         console.log("removeFriend");
     }
+
+    function createServer() {
+        console.log("createServer");
+    }
 </script>
 
 <svelte:head>
@@ -72,6 +76,11 @@
     {/each}
     <dialog id="new">
         <h2>New Chat</h2>
+        <p class="text-gray-400">It's lonely here...</p>
+        <form on:submit|preventDefault={createServer} autocomplete="off">
+            <input placeholder="chat name..." class="w-full my-5" />
+            <button type="submit" class="w-full">Create</button>
+        </form>
     </dialog>
 {:else}
     <h3 class="mb-5 text-center">Wowwwww!! sign in!11</h3>

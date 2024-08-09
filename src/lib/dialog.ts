@@ -6,13 +6,11 @@ export function showDialog(name: string) {
 
     // show modal
     (
-        document.querySelector(`dialog#${name}`) as HTMLDialogElement
+        document.getElementById(name) as HTMLDialogElement
     ).showModal();
 
     // hide dialog on backdrop click
-    const dialog = document.querySelector(
-        `dialog#${name}`,
-    ) as HTMLDialogElement;
+    const dialog = document.getElementById(name) as HTMLDialogElement;
 
     dialog.addEventListener(
         "click",
