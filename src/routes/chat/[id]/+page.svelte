@@ -131,7 +131,7 @@
     <div id="messages" class="overflow-auto h-[50vh] mb-5">
         {#if messages && messages.length !== 0}
             {#each messages as message, i}
-                <Message {messages} {message} username={message.username} {i} />
+                <Message {messages} {message} username={data.user.username} {i} />
             {/each}
         {:else}
             <p class="text-center text-gray-400">No messages yet</p>

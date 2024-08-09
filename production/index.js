@@ -10,15 +10,12 @@ const server = createServer(app);
 
 const io = new Server(server);
 
-io.on("connection", async socket => {
-    socket.on("message", async msg => {
-        const user = await db`SELECT profile, username FROM yasss_users WHERE id = ${msg.username};`;
-
-        io.emit(`message_${msg.server}`, {
-            // broadcast message back to all clients
-            profile: user[0].profile,
-            username: user[0].username,
-            text: msg.text
+io.on("connection", socket => {
+    socket.on("message", async (msg) => {
+        const author = await db`SELECT username FROM yasss_users WHERE id = ${msg.username};`;
+        socket.broadcast.emit(msg.id, {
+            text: msg.text,
+            username: author[0].username
         });
     });
 });
