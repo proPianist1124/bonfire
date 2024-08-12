@@ -7,15 +7,13 @@ export async function POST({ request }: {
 }) {
     const formData = await request.json();
 
-    const chat = await db`SELECT id, messages FROM yasss_chats WHERE id = ${formData.message.id};`;
+    const chat = await db`SELECT id, messages FROM bonfire_chats WHERE id = ${formData.message.id};`;
 
     delete formData.message.id;
 
     formData.message.text = CryptoJS.AES.encrypt(formData.message.text.replaceAll(`"`, `\"`), ENCRYPTION_KEY).toString();
 
-    await db`UPDATE yasss_chats SET messages = ${[{
-        ...formData.message
-    }, ...chat[0].messages]} WHERE id = ${chat[0].id};`;
+    await db`UPDATE bonfire_chats SET messages = ${[...chat[0].messages, formData.message]} WHERE id = ${chat[0].id};`;
 
     return new Response("Message saved");
 }

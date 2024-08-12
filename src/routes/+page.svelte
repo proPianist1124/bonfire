@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-    <title>Home / yasss</title>
+    <title>Home / Bonfire</title>
 </svelte:head>
 
 {#if !data.error}

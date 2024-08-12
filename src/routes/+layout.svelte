@@ -9,22 +9,22 @@
     href="/"
     class="flex justify-center font-bold text-4xl mb-5 duration-100 hover:text-gray-500"
 >
-    yasss
+    Bonfire
 </a>
 <main
-    class="bg-gray-50 max-w-[650px] {data.user ? "h-[75vh]": ""} overflow-auto block m-auto p-5 rounded-md"
+    class="bg-gray-50 max-w-[650px] block m-auto p-5 rounded-md"
 >
     {#if $navigating}
-        <p class="font-bold text-3xl text-center mt-10">Loading...</p>
+        <p class="font-bold text-3xl my-10 text-center mt-10">Loading...</p>
     {:else}
         <slot />
     {/if}
 </main>
 {#if data.user}
     <main
-        class="max-w-[650px] bg-gray-100 block m-auto mt-5 rounded-full p-2 flex items-center"
+        class="max-w-[650px] bg-gray-50 block m-auto mt-5 rounded-full p-2 flex items-center"
     >
-        <p class="font-medium text-lg flex items-center">
+        <p class="font-medium text-xl flex items-center">
             <img
                 src="/profiles/default.png"
                 class="w-9 h-9 rounded-full mr-1 border border-gray-300"

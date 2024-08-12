@@ -8,7 +8,7 @@ export async function load({ cookies, url }: {
     url: { pathname: string }
 }) {
     try {
-        const user = await db`SELECT * FROM yasss_users WHERE id = ${cookies.get("token")};`;
+        const user = await db`SELECT * FROM bonfire_users WHERE id = ${cookies.get("token")};`;
 
         return {
             user: user[0]

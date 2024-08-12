@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-    <title>{error ? "404" : $page.status} / Yasss</title>
+    <title>{error ? "404" : $page.status} / Bonfire</title>
 </svelte:head>
 
 <div class="text-center">

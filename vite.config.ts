@@ -16,7 +16,7 @@ const webSocketServer = {
 				text: string;
 				username: string;
 			}) => {
-				const author = await db`SELECT username FROM yasss_users WHERE id = ${msg.username};`;
+				const author = await db`SELECT username FROM bonfire_users WHERE id = ${msg.username};`;
 				socket.broadcast.emit(msg.id, {
 					text: msg.text,
 					username: author[0].username

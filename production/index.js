@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import { handler } from "../build/handler.js";
 import { db } from "./postgres.js";
 
-const port = 4173;
+const port = 3000;
 const app = express();
 const server = createServer(app);
 
@@ -12,7 +12,7 @@ const io = new Server(server);
 
 io.on("connection", socket => {
     socket.on("message", async (msg) => {
-        const author = await db`SELECT username FROM yasss_users WHERE id = ${msg.username};`;
+        const author = await db`SELECT username FROM bonfire_users WHERE id = ${msg.username};`;
         socket.broadcast.emit(msg.id, {
             text: msg.text,
             username: author[0].username

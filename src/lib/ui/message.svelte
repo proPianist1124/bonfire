@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { showDialog } from "./dialog";
+    import { showDialog } from "../dialog";
 
     export let messages: Array<{
         text: string;
@@ -15,8 +15,12 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div
-    on:mouseover={() => (showButton = true)}
-    on:mouseleave={() => (showButton = false)}
+    on:mouseover={() => {
+        if (message.username != username) showButton = true;
+    }}
+    on:mouseleave={() => {
+        if (message.username != username) showButton = false;
+    }}
     class="block text-lg {messages[i + 1]?.username == message.username
         ? ''
         : 'mb-3'}"

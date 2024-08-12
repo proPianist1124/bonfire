@@ -1,11 +1,12 @@
 <script lang="ts">
+    import { onMount, tick } from "svelte";
     import { io } from "socket.io-client";
     import { v4 as uuid } from "uuid";
     import Error from "../../+error.svelte";
     import { showDialog } from "$lib/dialog";
-    import Message from "$lib/message.svelte";
+    import Message from "$lib/ui/message.svelte";
 
-    type message = {
+    type Message = {
         id?: string;
         message_id: string;
         text: string;
@@ -18,7 +19,7 @@
         type: string;
         username: string;
         owner: string;
-        messages: Array<message>;
+        messages: Array<Message>;
         members: Array<{
             username: string;
             profile: string;
@@ -35,11 +36,19 @@
 
     let error: string = "";
 
-    let messages: Array<message> = data.messages ? [...data.messages] : [];
+    let messages: Array<Message> = data.messages ? [...data.messages] : [];
+
+    $: streak = Math.round(messages.length/3);
+
+    $: onMount(() => {
+        scrollToBottom();
+    });
 
     // listen for messages
-    socket.on(data.id, (message: message) => {
-        messages = [message, ...messages];
+    socket.on(data.id, async (message: Message) => {
+        messages = [...messages, message];
+        await tick();
+        scrollToBottom();
     });
 
     async function send(e: any) {
@@ -53,15 +62,15 @@
         const id = uuid();
 
         messages = [
+            ...messages,
             {
                 message_id: uuid(),
                 text: e.target.message.value,
                 username: data.user?.username,
-            },
-            ...messages,
+            }
         ];
 
-        const message: message = {
+        const message: Message = {
             id: data.id,
             message_id: id,
             text: e.target.message.value,
@@ -81,20 +90,47 @@
         });
 
         e.target.message.value = "";
+
+        // scroll to bottom
+        scrollToBottom();
     }
 
+    // remove a member
     async function remove(id: string) {
         console.log("removing", id);
+    }
+
+    // purge chat messages
+    async function purge() {
+        /* await fetch("/api/chat/purge", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                id: data.id,
+            }),
+        }); */
+
+        // window.location.reload();
+        
+        messages = [];
+    }
+
+    // scroll message box
+    function scrollToBottom() {
+        const msgBox: HTMLElement | null = document.getElementById("messages");
+        if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
     }
 </script>
 
 <svelte:head>
     <title
         >{data.error
-            ? "404 / yasss"
+            ? "404 / Bonfire"
             : data.type == "dm"
-              ? `${data.username} / yasss`
-              : `${data.name} / yasss`}</title
+              ? `${data.username} / Bonfire`
+              : `${data.name} / Bonfire`}</title
     >
 </svelte:head>
 
@@ -108,7 +144,7 @@
 {:else}
     <h3 class="flex items-center mb-5 font-medium bg-gray-100 p-5 rounded-md">
         {data.type == "dm" ? data.username : data.name}
-        <span class="block ml-auto"> 🔥5 </span>
+        <span class="block ml-auto"> 🔥{streak} </span>
         <button on:click={() => showDialog("settings")} class="secondary ml-2">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -128,10 +164,15 @@
             >
         </button>
     </h3>
-    <div id="messages" class="overflow-auto h-[50vh] mb-5">
+    <div id="messages" class="overflow-auto h-[50vh] w-full mb-5">
         {#if messages && messages.length !== 0}
             {#each messages as message, i}
-                <Message {messages} {message} username={data.user.username} {i} />
+                <Message
+                    {messages}
+                    {message}
+                    username={data.user.username}
+                    {i}
+                />
             {/each}
         {:else}
             <p class="text-center text-gray-400">No messages yet</p>
@@ -166,7 +207,7 @@
     <h3 class="text-red-500">Danger</h3>
     <div class="button-container">
         {#if data.owner == data.user.id}
-            <button class="danger">Purge</button>
+            <button on:click={purge} class="danger">Purge</button>
             <button class="danger">Delete</button>
         {:else}
             <button class="danger">Leave</button>
