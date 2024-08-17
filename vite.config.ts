@@ -18,9 +18,14 @@ const webSocketServer = {
 			}) => {
 				const author = await db`SELECT username FROM bonfire_users WHERE id = ${msg.username};`;
 				socket.broadcast.emit(msg.id, {
+					type: "message",
 					text: msg.text,
 					username: author[0].username
 				});
+			});
+
+			socket.on("purge", (id: string) => {
+				socket.broadcast.emit(`purge_${id}`, true);
 			});
 		});
 	}

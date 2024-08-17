@@ -14,7 +14,7 @@ export async function load({ cookies, url }: {
             user: user[0]
         }
     } catch (e) {
-        if (url.pathname == "/") {
+        if (url.pathname == "/" || url.pathname == "/api/auth/magic-link") {
             return {
                 error: "User not found"
             }

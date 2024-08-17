@@ -27,7 +27,7 @@
 >
     <span
         class="block {username == message.username
-            ? 'text-red-500'
+            ? 'text-orange-500'
             : 'text-blue-500'} font-medium"
         >{username == message.username
             ? messages[i - 1]?.username == message.username
@@ -38,9 +38,9 @@
               : message.username}</span
     >
     <div
-        class="border-l-2 duration-100 hover:bg-gray-200 p-2 w-full flex items-center rounded-r-md {username ==
+        class="border-l-2 duration-100 hover:bg-gray-200 p-2 w-full flex items-center {username ==
         message.username
-            ? 'border-l-red-500'
+            ? 'border-l-orange-500'
             : 'border-l-blue-500'}"
     >
         {message.text}

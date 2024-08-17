@@ -52,6 +52,6 @@ export async function GET({ url, cookies }) {
             return new Response("Invalid code.");
         }
     } else {
-        return new Response("Invalid code.");
+        redirect(302, "/");
     }
 }

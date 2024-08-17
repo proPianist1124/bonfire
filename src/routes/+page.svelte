@@ -1,29 +1,49 @@
 <script>
     import { showDialog } from "$lib/dialog";
+    import Alert from "$lib/ui/alert.svelte";
     import { PUBLIC_DISCORD_REDIRECT } from "$env/static/public";
 
     export let data;
 
-    function removeFriend() {
-        console.log("removeFriend");
+    let error = "";
+    let success = "";
+
+    async function loginWithEmail(e) {
+        error = "";
+        success = "";
+
+        const res = await fetch("/api/auth/magic-link", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email: e.target.email.value,
+            }),
+        }).then((res) => res.json());
+
+        if (res.success) {
+            success = res.success;
+        } else {
+            error = res.error;
+        }
     }
 
-    function createServer() {
-        console.log("createServer");
+    function removeFriend() {
+        console.log("removeFriend");
     }
 </script>
 
 <svelte:head>
-    <title>Home / Bonfire</title>
+    <title>{!data.error ? "Home / Bonfire" : "Login / Bonfire"}</title>
 </svelte:head>
 
 {#if !data.error}
     <h2 class="mb-5 flex items-center">
         Friends
-        <button
-            on:click={() => showDialog("new")}
-            class="secondary font-normal ml-auto">+</button
-        >
+        <a href="/create" class="ml-auto">
+            <button class="secondary font-normal">+</button>
+        </a>
     </h2>
     {#each data.chats as chat}
         <a href="/chat/{chat.id}">
@@ -74,19 +94,45 @@
             </div>
         </a>
     {/each}
-    <dialog id="new">
-        <h2>New Chat</h2>
-        <p class="text-gray-400">It's lonely here...</p>
-        <form on:submit|preventDefault={createServer} autocomplete="off">
-            <input placeholder="chat name..." class="w-full my-5" />
-            <button type="submit" class="w-full">Create</button>
-        </form>
-    </dialog>
 {:else}
+    {#if error}
+        <Alert>{error}</Alert>
+    {/if}
     <h3 class="mb-5 text-center">Wowwwww!! sign in!11</h3>
-    <a href={PUBLIC_DISCORD_REDIRECT}>
-        <button class="block m-auto bg-[#5865F2] hover:bg-[#5865F2]/90"
-            >Sign In with Discord</button
+    <div class="w-6/12 block m-auto">
+        <a href={PUBLIC_DISCORD_REDIRECT}>
+            <button class="w-full bg-[#5865F2] hover:bg-[#5865F2]/90"
+                >Sign In with Discord</button
+            >
+        </a>
+        <p class="text-gray-500 text-center my-2">or</p>
+        <form
+            on:submit|preventDefault={loginWithEmail}
+            autocomplete="off"
+            class="w-full flex items-center justify-center"
         >
-    </a>
+            <input
+                type="email"
+                name="email"
+                placeholder="email address"
+                class="mr-2 w-full"
+                required
+            />
+            <button type="submit">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path d="M6 9h6V5l7 7-7 7v-4H6V9z" /></svg
+                >
+            </button>
+        </form>
+        <p class="text-green-500">{success}</p>
+    </div>
 {/if}

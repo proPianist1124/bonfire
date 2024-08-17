@@ -16,6 +16,7 @@ export async function load({ params, cookies }: {
         if (chat) {
             chat[0].messages = await Promise.all(await chat[0].messages.map(async (msg: {
                 id: string;
+                type: string;
                 message_id: string;
                 username: string;
                 text: string;
@@ -25,6 +26,7 @@ export async function load({ params, cookies }: {
     
                 return {
                     message_id: msg.message_id,
+                    type: msg.type,
                     ...author[0],
                     text: bytes.toString(CryptoJS.enc.Utf8)
                 }

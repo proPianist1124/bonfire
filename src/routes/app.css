@@ -40,7 +40,7 @@
     }
 
     button {
-        @apply bg-blue-500 text-white px-4 py-2 rounded-md duration-100 hover:bg-blue-600;
+        @apply bg-orange-500 text-white px-4 py-2 rounded-md duration-100 hover:bg-orange-600;
     }
 
     button.secondary {
@@ -52,11 +52,15 @@
     }
 
     button.danger {
-        @apply bg-red-500 text-white hover:bg-red-600;
+        @apply bg-red-500 text-gray-200 hover:bg-red-600;
     }
 
     input {
         @apply p-2 bg-gray-100 rounded-md border border-gray-200;
+    }
+
+    input:focus {
+        @apply outline-orange-500;
     }
 
     dialog {

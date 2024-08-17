@@ -8,6 +8,7 @@
 
     type Message = {
         id?: string;
+        type: string;
         message_id: string;
         text: string;
         username: string;
@@ -38,9 +39,9 @@
 
     let messages: Array<Message> = data.messages ? [...data.messages] : [];
 
-    $: streak = Math.round(messages.length/3);
+    $: streak = Math.round(messages.length / 3);
 
-    $: onMount(() => {
+    onMount(() => {
         scrollToBottom();
     });
 
@@ -49,6 +50,11 @@
         messages = [...messages, message];
         await tick();
         scrollToBottom();
+    });
+
+    // listen for purging
+    socket.on(`purge_${data.id}`, () => {
+        messages = [];
     });
 
     async function send(e: any) {
@@ -65,13 +71,15 @@
             ...messages,
             {
                 message_id: uuid(),
+                type: "message",
                 text: e.target.message.value,
                 username: data.user?.username,
-            }
+            },
         ];
 
         const message: Message = {
             id: data.id,
+            type: "message",
             message_id: id,
             text: e.target.message.value,
             username: data.user?.id,
@@ -85,6 +93,7 @@
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                type: "message",
                 message,
             }),
         });
@@ -102,7 +111,7 @@
 
     // purge chat messages
     async function purge() {
-        /* await fetch("/api/chat/purge", {
+        await fetch("/api/chat/purge", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -110,11 +119,11 @@
             body: JSON.stringify({
                 id: data.id,
             }),
-        }); */
+        });
 
-        // window.location.reload();
-        
         messages = [];
+
+        socket.emit("purge", data.id);
     }
 
     // scroll message box
@@ -167,12 +176,14 @@
     <div id="messages" class="overflow-auto h-[50vh] w-full mb-5">
         {#if messages && messages.length !== 0}
             {#each messages as message, i}
-                <Message
-                    {messages}
-                    {message}
-                    username={data.user.username}
-                    {i}
-                />
+                {#if message.type == "message"}
+                    <Message
+                        {messages}
+                        {message}
+                        username={data.user.username}
+                        {i}
+                    />
+                {/if}
             {/each}
         {:else}
             <p class="text-center text-gray-400">No messages yet</p>
